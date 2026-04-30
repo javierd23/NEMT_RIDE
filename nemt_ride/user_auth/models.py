@@ -2,6 +2,18 @@ from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
+
+class UserRoles(models.Model):
+    """I will add roles instead of string field to the user 
+    since it is more efficient and we can easily add more 
+    roles in the future if needed"""
+    #id 1 admin
+    #id 2 driver
+    #id 3 rider
+    # ... add more roles as we may need in future 
+    role = models.CharField(max_length=100, unique=True)
+
+
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
@@ -31,13 +43,16 @@ class CustomUserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
 
     id_user = models.AutoField(primary_key=True)
-    email = models.EmailField(blank=False, max_length=255, unique=True)
-    first_name = models.CharField(blank=True, max_length=255, default='', 
+    email = models.EmailField(blank=False, max_length=75, unique=True)
+    first_name = models.CharField(blank=True, max_length=50, default='', 
                                   verbose_name="First name", null=True)
-    last_name = models.CharField(blank=True, max_length=255, default='', 
+    last_name = models.CharField(blank=True, max_length=50, default='', 
                                  verbose_name="Last name", null=True)
     phone_number = models.CharField(blank=True, max_length=20, default='', 
                                     verbose_name="Phone number", null=True)
+    
+    role = models.ForeignKey(UserRoles, on_delete=models.SET_DEFAULT, default=3,
+                             related_name='users_role')
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
