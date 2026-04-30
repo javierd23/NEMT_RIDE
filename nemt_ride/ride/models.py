@@ -5,11 +5,12 @@ from django.conf import settings
 class RideStatus(models.Model):
     """I added the status of the ride as a separate model since it is 
     more efficient and we can easily add more statuses in the future if needed"""
-    #id 1 en-route
-    #id 2 picked-up
-    #id 3 started
-    #id 4 dropped-off
-    #id 5 cancelled 
+    #id 1 requested
+    #id 2 en-route
+    #id 3 picked-up
+    #id 4 started
+    #id 5 dropped-off
+    #id 6 cancelled 
     status = models.CharField(max_length=100, unique=True)
 
 
