@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'ride',
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'django_filters',
 ]
 
@@ -67,7 +68,6 @@ REST_FRAMEWORK = {
         'user': '100/minute',
     },
 }
-
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
