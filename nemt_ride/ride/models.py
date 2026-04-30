@@ -3,6 +3,8 @@ from django.conf import settings
 
 
 class RideStatus(models.Model):
+    """I added the status of the ride as a separate model since it is 
+    more efficient and we can easily add more statuses in the future if needed"""
     #id 1 en-route
     #id 2 picked-up
     #id 3 started
