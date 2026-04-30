@@ -17,7 +17,7 @@ class IsAdmin(BasePermission):
             raise PermissionsDenied(detail="Authentication credentials were not provided.")
         
         user = request.user
-        if user.role and user.role.role == 'Admin':
+        if user.role and user.role.role == 'admin':
             return True
         
         raise PermissionsDenied(self.message)
