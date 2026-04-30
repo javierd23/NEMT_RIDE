@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission 
-from rest_framework.permissions import PermissionsDenied
+from rest_framework.exceptions import PermissionDenied
 from user_auth.models import UserRoles
 from user_auth.models import User
 
@@ -14,10 +14,10 @@ class IsAdmin(BasePermission):
     def has_permission(self, request, view):
 
         if not request.user.is_authenticated:
-            raise PermissionsDenied(detail="Authentication credentials were not provided.")
+            raise PermissionDenied(detail="Authentication credentials were not provided.")
         
         user = request.user
         if user.role and user.role.role == 'admin':
             return True
         
-        raise PermissionsDenied(self.message)
+        raise PermissionDenied(self.message)
