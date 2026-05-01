@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
 
 from .serializers import SignUpSerializer, LoginSerializer, LogoutSerializer, UserProfileSerializer
 
@@ -64,5 +65,5 @@ class LogoutView(APIView):
             return Response({'detail': 'Successfully logged out.'}, status=status.HTTP_200_OK)
         except KeyError:
             return Response({'detail': 'Refresh token required.'}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception:
-            return Response({'detail': 'Invalid or expired token.'}, status=status.HTTP_400_BAD_REQUEST)
+        except TokenError as e:
+            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)

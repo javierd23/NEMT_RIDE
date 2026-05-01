@@ -10,21 +10,11 @@ class UserRoleSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.ModelSerializer):
-    
-    # I added this primary key to allow user to select the role, this could be change if 
-    # we want to assign the role based on the endpoint or something else.
-    role = serializers.PrimaryKeyRelatedField(queryset=UserRoles.objects.all(), required=False) 
     password = serializers.CharField(write_only=True, min_length=8)
 
     class Meta:
         model = User
-        fields = ['email', 
-                  'password', 
-                  'first_name', 
-                  'last_name', 
-                  'phone_number', 
-                  'role'
-        ]
+        fields = ['email', 'password', 'first_name', 'last_name', 'phone_number']
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)

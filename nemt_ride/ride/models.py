@@ -13,6 +13,9 @@ class RideStatus(models.Model):
     #id 6 cancelled 
     status = models.CharField(max_length=100, unique=True)
 
+    def __str__(self):
+        return self.status
+
 
 class Ride(models.Model):
     id_ride = models.AutoField(primary_key=True)
@@ -32,11 +35,20 @@ class Ride(models.Model):
     dropoff_latitude = models.FloatField(max_length=20, null=True, blank=True)
     dropoff_longitude = models.FloatField(max_length=20, null=True, blank=True)
 
+    updated_at = models.DateTimeField(auto_now=True)
+
     pickup_time = models.DateTimeField()
 
     def __str__(self):
         return f"Ride from ({self.pickup_latitude}, {self.pickup_longitude}) to ({self.dropoff_latitude}, {self.dropoff_longitude}) on {self.pickup_time}"
-    
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['pickup_time']),
+            models.Index(fields=['status']),
+            models.Index(fields=['id_rider']),
+        ]
+
 class Ride_Event(models.Model):
     id_ride_event = models.AutoField(primary_key=True)
     id_ride = models.ForeignKey(Ride, on_delete=models.CASCADE, related_name='ride_events')
