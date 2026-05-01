@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from user_auth.models import User
 from .models import Ride, Ride_Event
 
 
@@ -8,18 +7,8 @@ class RideEventSerializer(serializers.ModelSerializer):
         model = Ride_Event
         fields = ['id_ride_event', 'description', 'created_at']
 
-
-# class UserBriefSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['id_user', 'email', 'first_name', 'last_name']
-
-
 class RideSerializer(serializers.ModelSerializer):
     status = serializers.StringRelatedField()
-
-    # id_rider = UserBriefSerializer(read_only=True)
-    # id_driver = UserBriefSerializer(read_only=True)
 
     # Populated via Prefetch(to_attr='todays_ride_events') — never fetches full event list
     todays_ride_events = RideEventSerializer(many=True, read_only=True)

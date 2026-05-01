@@ -1,9 +1,5 @@
-from rest_framework.permissions import BasePermission 
+from rest_framework.permissions import BasePermission
 from rest_framework.exceptions import PermissionDenied
-from user_auth.models import UserRoles
-from user_auth.models import User
-
-from django.shortcuts import get_object_or_404
 
 
 class IsAdmin(BasePermission):

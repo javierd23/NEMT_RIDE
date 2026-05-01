@@ -30,10 +30,10 @@ class Ride(models.Model):
                                  on_delete=models.CASCADE, related_name='rides_as_driver', 
                                  null=True, blank=True) # in case there is no driver assigned yet.
     
-    pickup_latitude = models.FloatField(max_length=20, null=True, blank=True)
-    pickup_longitude = models.FloatField(max_length=20, null=True, blank=True)
-    dropoff_latitude = models.FloatField(max_length=20, null=True, blank=True)
-    dropoff_longitude = models.FloatField(max_length=20, null=True, blank=True)
+    pickup_latitude = models.FloatField(null=True, blank=True)
+    pickup_longitude = models.FloatField(null=True, blank=True)
+    dropoff_latitude = models.FloatField(null=True, blank=True)
+    dropoff_longitude = models.FloatField(null=True, blank=True)
 
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -54,4 +54,7 @@ class Ride_Event(models.Model):
     id_ride = models.ForeignKey(Ride, on_delete=models.CASCADE, related_name='ride_events')
 
     description = models.CharField(max_length=300)
-    created_at = models.DateTimeField(auto_now_add=True)   
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Event {self.id_ride_event} on Ride {self.id_ride_id}: {self.description[:50]}"
