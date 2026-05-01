@@ -4,6 +4,8 @@ from django.db.models import ExpressionWrapper, F, FloatField, Prefetch, Value
 from django.db.models.functions import ACos, Cos, Radians, Sin
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 from rest_framework import viewsets
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
@@ -21,7 +23,16 @@ class RideViewSet(viewsets.ModelViewSet):
     filterset_class = RideFilter
     ordering_fields = ['pickup_time', 'distance_to_pickup']
     ordering = ['-pickup_time']
-
+    @extend_schema(
+        parameters=[
+            OpenApiParameter('lat', OpenApiTypes.FLOAT, OpenApiParameter.QUERY,
+                             description='Latitude of your GPS position for distance sorting.', required=False),
+            OpenApiParameter('lon', OpenApiTypes.FLOAT, OpenApiParameter.QUERY,
+                             description='Longitude of your GPS position for distance sorting.', required=False),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
     def _todays_events_prefetch(self):
         """Prefetch only ride events from the last 24 hours — never loads full history."""
         since = timezone.now() - timedelta(hours=24)
