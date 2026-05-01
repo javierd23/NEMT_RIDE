@@ -22,6 +22,7 @@ A RESTful API built with **Django 6** and **Django REST Framework** for managing
 - [Django Admin](#django-admin)
 - [Design Decisions](#design-decisions)
 - [Known Limitations & Future Work](#known-limitations--future-work)
+- [Bonus: SQL Report — Trips Over 1 Hour](#bonus-sql-report--trips-over-1-hour)
 
 ---
 
@@ -372,3 +373,53 @@ Swagger/ReDoc, `django-debug-toolbar`, and the SQL console logger are all guarde
 - **No email verification** — User signup does not require email confirmation. This is intentional for the initial API scope.
 - **No refresh token endpoint for signup/login** — The login and signup responses return a refresh token in the body. In a production system consider setting the refresh token in an `HttpOnly` cookie to mitigate XSS exposure.
 - **Dispatcher role** — The `dispatcher` role exists in the seed data but has no dedicated endpoints or permissions yet.
+
+---
+
+## Bonus: SQL Report — Trips Over 1 Hour
+
+Returns the count of trips that took **more than 1 hour** from pickup to dropoff, grouped by **month** and **driver**.
+
+The trip duration is derived from two `Ride_Event` rows on the same ride:
+- `"Status changed to pickup"` — recorded when the driver picks up the rider
+- `"Status changed to dropoff"` — recorded when the rider is dropped off
+
+```sql
+SELECT
+    strftime('%Y-%m', pickup_evt.created_at)    AS month,
+    u.first_name || ' ' || u.last_name          AS driver,
+    COUNT(*)                                    AS trips_over_1hr
+FROM ride_ride r
+JOIN user_auth_user   u            ON u.id_user             = r.id_driver_id
+JOIN ride_ride_event  pickup_evt   ON pickup_evt.id_ride_id  = r.id_ride
+                                  AND pickup_evt.description  = 'Status changed to pickup'
+JOIN ride_ride_event  dropoff_evt  ON dropoff_evt.id_ride_id = r.id_ride
+                                  AND dropoff_evt.description = 'Status changed to dropoff'
+WHERE (
+    julianday(dropoff_evt.created_at) - julianday(pickup_evt.created_at)
+) * 24 > 1
+GROUP BY month, driver
+ORDER BY month, driver;
+```
+
+**Sample output:**
+
+| Month | Driver | trips_over_1hr |
+|---|---|---|
+| 2024-01 | Chris H | 4 |
+| 2024-01 | Howard Y | 5 |
+| 2024-01 | Randy W | 2 |
+| 2024-02 | Chris H | 7 |
+| 2024-02 | Howard Y | 5 |
+| 2024-03 | Chris H | 2 |
+| 2024-03 | Howard Y | 2 |
+| 2024-03 | Randy W | 11 |
+
+**Notes:**
+- Table names follow Django's convention: `<app>_<model>` → `ride_ride`, `ride_ride_event`, `user_auth_user`.
+- `ride_ride_event` is joined **twice** (with different aliases) to independently locate the pickup and dropoff events for the same ride.
+- `julianday()` is SQLite-specific. On **PostgreSQL**, replace the duration check with:
+  ```sql
+  EXTRACT(EPOCH FROM (dropoff_evt.created_at - pickup_evt.created_at)) / 3600 > 1
+  ```
+- Rides where either the pickup or dropoff event is missing are automatically excluded by the `INNER JOIN`.

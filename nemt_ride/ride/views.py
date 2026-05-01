@@ -23,6 +23,7 @@ class RideViewSet(viewsets.ModelViewSet):
     filterset_class = RideFilter
     ordering_fields = ['pickup_time', 'distance_to_pickup']
     ordering = ['-pickup_time']
+   
     @extend_schema(
         parameters=[
             OpenApiParameter('lat', OpenApiTypes.FLOAT, OpenApiParameter.QUERY,
@@ -33,6 +34,7 @@ class RideViewSet(viewsets.ModelViewSet):
     )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
+    
     def _todays_events_prefetch(self):
         """Prefetch only ride events from the last 24 hours — never loads full history."""
         since = timezone.now() - timedelta(hours=24)
