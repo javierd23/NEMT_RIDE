@@ -19,6 +19,11 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ]
+
     from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView
     urlpatterns += [
         path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
