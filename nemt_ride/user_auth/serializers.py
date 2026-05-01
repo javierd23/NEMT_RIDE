@@ -48,6 +48,10 @@ class LoginSerializer(serializers.Serializer):
         return attrs
 
 
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField(help_text='Refresh token to blacklist.')
+
+
 class UserProfileSerializer(serializers.ModelSerializer):
     role = UserRoleSerializer(read_only=True)
 
