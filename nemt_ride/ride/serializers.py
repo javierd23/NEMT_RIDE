@@ -1,4 +1,6 @@
 from rest_framework import serializers
+
+from user_auth.models import User
 from .models import Ride, Ride_Event
 
 
@@ -6,6 +8,13 @@ class RideEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ride_Event
         fields = ['id_ride_event', 'description', 'created_at']
+
+# class UserSerializer(serializers.ModelSerializer):
+#     """This is a nested serializer I would you to get more 
+#     data from user model, and nested with it_ride in RideSerializer"""
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username', 'email']
 
 class RideSerializer(serializers.ModelSerializer):
     status = serializers.StringRelatedField()

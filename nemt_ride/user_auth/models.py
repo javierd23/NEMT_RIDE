@@ -16,7 +16,6 @@ class UserRoles(models.Model):
     def __str__(self):
         return self.role
 
-
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
@@ -43,6 +42,8 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_superuser=True.')
 
         return self._create_user(email, password, **extra_fields)
+    
+
 class User(AbstractBaseUser, PermissionsMixin):
 
     id_user = models.AutoField(primary_key=True)
